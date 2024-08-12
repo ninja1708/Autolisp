@@ -98,7 +98,10 @@
   ;; Tworzenie przesuniętej linii
   (entmakex (list '(0 . "LINE")
                   (cons 10 newPt1)
-                  (cons 11 newPt2)))
+                  (cons 11 newPt2)
+                  (cons 62 5 ) ;; Kolor niebieski
+            )
+  )
   
   ;; Przywracanie pierwotnej warstwy
   (princ "\nZmiana warstwy na standardową")
@@ -193,7 +196,10 @@
   ;; Tworzenie przesuniętej linii
   (entmakex (list '(0 . "LINE")
                   (cons 10 newPt1)
-                  (cons 11 newPt2))
+                  (cons 11 newPt2)
+                  (cons 62 5 ) ;; Kolor niebieski
+                   
+            )
   )
 
   ;; Obliczanie długości przesuniętej linii
@@ -608,107 +614,6 @@
   (setvar "clayer" oldLayer)
 )
 
-;;Wstawianie bloku z tabelą do poprawy ale na razie pauza XD
-;;=================================================================================;;
-(defun create-table-block (data1 data2)
-  (setq block-name "TableBlock")
-  
-  ;; Usunięcie istniejącego bloku o tej samej nazwie, jeśli istnieje
-  (if (tblsearch "block" block-name)
-    (command "_.-PURGE" "_B" block-name "_N")
-  )
-
-  ;; Definicja nowego bloku
-  (setq blk-def (entmake
-    (list
-      (cons 0 "BLOCK")
-      (cons 2 block-name)
-      (cons 70 0)  ;; Flag
-      (cons 10 (list 0.0 0.0 0.0)) ;; Punkt wstawienia bloku
-    )
-  ))
-
-  ;; Wysokość tekstu
-  (setq text-height 1.0)
-  ;; Odstępy między komórkami
-  (setq row-height 1.5)
-  (setq col-width 5.0)
-
-  ;; Dodawanie zawartości tabeli do bloku
-  (setq row 0)
-  (foreach item data1
-    (entmake
-      (list
-        (cons 0 "TEXT")
-        (cons 8 "0") ;; Warstwa
-        (cons 10 (list 0.0 (* -1.5 row) 0.0)) ;; Pozycja tekstu kolumna 1
-        (cons 40 text-height) ;; Wysokość tekstu
-        (cons 1 item) ;; Tekst
-      )
-    )
-    (entmake
-      (list
-        (cons 0 "TEXT")
-        (cons 8 "0") ;; Warstwa
-        (cons 10 (list col-width (* -1.5 row) 0.0)) ;; Pozycja tekstu kolumna 2
-        (cons 40 text-height) ;; Wysokość tekstu
-        (cons 1 (nth row data2)) ;; Tekst
-      )
-    )
-    (setq row (1+ row))
-  )
-
-  ;; Kończenie definicji bloku
-  (entmake
-    (list
-      (cons 0 "ENDBLK")
-    )
-  )
-  ;; Dodawanie bloku do rysunku
-  (setq punkt (getpoint "Wskaż miejsce wklejenia tabeli: ") )
-  (command "_.-INSERT" block-name punkt 1000.0 1000.0 0.0) ;; 1000.0 te dwie wartości to scala
-)
-
-(defun C:WstawI ()
-  (defun save1 (x)
-    (setq sumadl x)
-    (setq suma 0)
-    (foreach i sumadl
-      (setq suma (+ suma i))
-    )
-    
-  ) 
-  (setq 
-    r1 0
-    r2 0
-    r3 0
-    r4 0
-  )
-  (setq r1 (save1 dvk1m))
-  (setq r2 (save1 DVK))
-  (if (= r2 nil) (setq r2 0))
-  (if (= r1 nil)(setq r1 0) (setq r1 (+ r1 r2)))
-  (setq r1 (rtos r1 2 0))
-
-  (setq r3 (save1 srs))
-  (if (= r3 nil) (setq r3 0))
-  (setq r3 (rtos r3 2 0))
-  
-  (setq r4 (save1 hdbe) )
-  (if (= r4 nil) (setq r4 0))
-  (setq r4 (rtos r4 2 0))
-  
-  
-  
-  
-  ;; Nazwy w pierwszej kolumnie
-  (setq data1 '("dvk" "srs" "hdbe"))
-  ;; Wartości w drugiej kolumnie z funkcji savedl
-  ;; Przykładowe wartości; należy zastąpić wywołaniem funkcji savedl
-  (setq data2 (list r1 r3 r4))
-  ;; Tworzenie i wstawianie bloku tabeli
-  (create-table-block data1 data2)
-)
 
 
 
