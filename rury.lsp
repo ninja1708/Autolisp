@@ -2,14 +2,29 @@
 (setq dvk '())
 (setq srs '())
 (setq hdbe '())
-(defun C:r1 () ;; Rura DVK 1m
-  ;; Pobieranie pierwotnej warstwy
-  (setq oldLayer (getvar "clayer"))
+(defun warstwy
+	(if (eq switch 1)
+		(progn
+		  ;; Pobieranie pierwotnej warstwy
+  		(setq oldLayer (getvar "clayer"))
   
-  ;; Ustawienie warstwy na ".rura"
-  (setq newLayer ".rura")
-  (princ "Zmiana warstwy na .rura")
-  (setvar "clayer" newLayer)
+  		;; Ustawienie warstwy na ".rura"
+  		(setq newLayer ".rura")
+  		(princ "Zmiana warstwy na .rura")
+  		(setvar "clayer" newLayer)
+ 			)
+		(progn
+	  
+  		;; Przywracanie pierwotnej warstwy
+		  (princ "\nZmiana warstwy na standardową")
+		  (setvar "clayer" oldLayer)
+  
+  		(princ "\nLinia została utworzona.")
+   		)
+	)
+) 
+(defun C:r1 () ;; Rura DVK 1m
+	(warstwy 1)
   
   ;; Pobieranie pierwszego punktu od użytkownika
   (setq pt1 (getpoint "Podaj środek rury: "))
@@ -103,12 +118,8 @@
             )
   )
   
-  ;; Przywracanie pierwotnej warstwy
-  (princ "\nZmiana warstwy na standardową")
-  (setvar "clayer" oldLayer)
-  
-  (princ "\nLinia została utworzona.")
-  (princ)
+  (warstwy 0)
+
 )
 
 (defun C:r2_DVK () ;; Rura DVK powyżej 1m
